@@ -2,8 +2,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap");
 
 * {
-  font-family: "Nunito", serif;
+  font-family: "Lobster Two", cursive, sans-serif; /* cursive for fun, sans-serif fallback */
   font-optical-sizing: auto;
   font-weight: 400;
-  font-style: bold;
+  font-style: normal;
 }
