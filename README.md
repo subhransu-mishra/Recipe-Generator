@@ -1,3 +1,4 @@
+
 # AI Recipe Generator
 
 AI Recipe Generator is a web application that generates unique and personalized recipes based on user inputs. Built using **React**, **Node.js**, and **Express**, it leverages **Google's Generative AI** to create dynamic and delicious recipes.
@@ -59,7 +60,12 @@ Ensure you have **Node.js** and **npm/yarn** installed on your machine.
 - `react-spinners`
 - `express`
 - `node-fetch`
+- - `react-loaders`
 
 ## Contributing
 Contributions are welcome! Feel free to fork the repository and submit a pull request.
+
+![Screenshot 2025-02-10 195955](https://github.com/user-attachments/assets/49f52089-31f9-478e-b399-6783fbf909aa)
+![Screenshot 2025-02-10 195918](https://github.com/user-attachments/assets/d0c592da-7101-44d1-b274-6d75aba12e81)
+![Screenshot 2025-02-10 195313](https://github.com/user-attachments/assets/936ac642-350d-4fc5-8680-428724b87e88)
 
