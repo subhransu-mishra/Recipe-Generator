@@ -1,9 +1,10 @@
 @import "tailwindcss";
-@import url("https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap");
-
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 * {
-  font-family: "Lobster Two", cursive, sans-serif; /* cursive for fun, sans-serif fallback */
+  font-family: "Roboto", serif;
   font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
+  font-weight: 700;
+  font-style: bold;
+   
 }
+
