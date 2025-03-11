@@ -10,7 +10,8 @@ const GEMINI_API_KEY = "AIzaSyAIE0ZafJbG2dYvYdYgwcWVPH55taI3WfU";
 const googleAI = new genAI.GoogleGenerativeAI(GEMINI_API_KEY); // Correct initialization
 
 app.get("/recipeStream", async (req, res) => {
-  const { ingredients, mealType, cuisine, complexity, cookingTime } = req.query;
+  const { ingredients, mealType, cuisine, complexity, cookingTime, type } =
+    req.query;
 
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
@@ -28,12 +29,13 @@ app.get("/recipeStream", async (req, res) => {
     Cuisine: ${cuisine}
     Cooking Time: ${cookingTime}
     Complexity: ${complexity}
+    type: ${type}
     Include detailed preparation and cooking steps, highlighting vibrant flavors.
     Name the recipe in the local language based on the cuisine.
   `;
 
   try {
-    const model = googleAI.getGenerativeModel({ model: "gemini-pro" });
+    const model = googleAI.getGenerativeModel({ model: "gemini-2.0-flash" });
     // Pass prompt as an array directly (required to be iterable)
     const result = await model.generateContentStream([{ text: prompt }]);
 
@@ -47,7 +49,8 @@ app.get("/recipeStream", async (req, res) => {
       } else if (chunk && typeof chunk === "object") {
         // Try a direct text property first.
         if (chunk.text) {
-          receivedText = typeof chunk.text === "function" ? chunk.text() : chunk.text;
+          receivedText =
+            typeof chunk.text === "function" ? chunk.text() : chunk.text;
         }
         // Then try looking inside candidates array.
         else if (
@@ -67,9 +70,9 @@ app.get("/recipeStream", async (req, res) => {
             candidate.content.parts[0].text
           ) {
             receivedText = candidate.content.parts
-              .map((part) => (
+              .map((part) =>
                 typeof part.text === "function" ? part.text() : part.text
-              ))
+              )
               .join(" ");
           }
           // Option 2: If candidate has parts directly
@@ -80,14 +83,17 @@ app.get("/recipeStream", async (req, res) => {
             candidate.parts[0].text
           ) {
             receivedText = candidate.parts
-              .map((part) => (
+              .map((part) =>
                 typeof part.text === "function" ? part.text() : part.text
-              ))
+              )
               .join(" ");
           }
           // Option 3: Fallback if candidate.text exists directly
           else if (candidate.text) {
-            receivedText = typeof candidate.text === "function" ? candidate.text() : candidate.text;
+            receivedText =
+              typeof candidate.text === "function"
+                ? candidate.text()
+                : candidate.text;
           }
         }
       } else {

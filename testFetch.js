@@ -1,17 +1,23 @@
-const fetch = require("node-fetch"); // Or use the undici fetch
-
-const GEMINI_API_KEY = "AIzaSyAIE0ZafJbG2dYvYdYgwcWVPH55taI3WfU";
-const url =
-  "https://generativeai.googleapis.com/v1/models/gemini-pro:generateContent"; // Adjust if needed
+const fetch = require("node-fetch");
+require("dotenv").config();
+const GEMINI_API_KEY = process.env.API_KEY;
+console.log("GEMINI_API_KEY:", GEMINI_API_KEY);
+const url = 
+  "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=" + GEMINI_API_KEY;
 
 fetch(url, {
   method: "POST",
   headers: {
-    Authorization: `Bearer ${GEMINI_API_KEY}`,
     "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    prompt: [{ text: "Test prompt" }],
+    contents: [
+      {
+        parts: [
+          { text: "Test prompt" }
+        ]
+      }
+    ]
   }),
 })
   .then((res) => res.json())

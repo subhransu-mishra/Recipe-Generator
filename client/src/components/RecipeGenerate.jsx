@@ -2,9 +2,11 @@ import React, { useState, useEffect, useRef } from "react";
 import PacmanLoader from "react-spinners/PacmanLoader";
 import { RiAiGenerate } from "react-icons/ri";
 
-
 const LoadingSpinner = () => (
-  <div className="inline-block h-16 w-16 animate-spin rounded-full border-4 border-orange-400 border-r-transparent" role="status">
+  <div
+    className="inline-block h-16 w-16 animate-spin rounded-full border-4 border-orange-400 border-r-transparent"
+    role="status"
+  >
     <span className="sr-only">Loading...</span>
   </div>
 );
@@ -43,15 +45,19 @@ const RecipeGenerate = () => {
           }
           return newIndex;
         });
-
-      setDisplayedText(recipeText.slice(0, newIndex));
       }, 50);
       return () => clearInterval(intervalId);
     }
   }, [recipeText, displayIndex]);
 
   const initializeEventStream = () => {
-    if (!recipeData?.ingredients || !recipeData?.mealType || !recipeData?.cuisine || !recipeData?.cookingTime || !recipeData?.complexity) {
+    if (
+      !recipeData?.ingredients ||
+      !recipeData?.mealType ||
+      !recipeData?.cuisine ||
+      !recipeData?.cookingTime ||
+      !recipeData?.complexity
+    ) {
       console.error("Invalid recipe data:", recipeData);
       return;
     }
@@ -76,7 +82,10 @@ const RecipeGenerate = () => {
 
     eventSourceRef.current.onerror = () => {
       console.error("EventSource failed.");
-      eventSourceRef.current.close();
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
+      }
       setLoading(false);
     };
   };
@@ -95,65 +104,74 @@ const RecipeGenerate = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-pink-50 p-4 md:p-8">
-    <div className="max-w-8xl mx-auto">
-      <header className="text-center mb-8">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-2">Recipe Wizard</h1>
-        <p className="text-gray-600">Transform your ingredients into culinary masterpieces</p>
-      </header>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white rounded-3xl shadow-xl p-6 md:p-8">
-          <Form onSubmit={onSubmit} loading={loading} />
-        </div>
-        
-        <div className="bg-white rounded-3xl shadow-xl p-6 md:p-8 min-h-[600px] relative">
-          {loading ? (
-            <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 rounded-3xl">
-              <div className="text-center space-y-4">
-                <PacmanLoader color="#ff6b35" size={30} />
-                <p className="text-orange-600 font-medium animate-pulse">
-                  Crafting your recipe...
-                </p>
-              </div>
-            </div>
-          ) : (
-            <div className="prose prose-lg max-w-none">
-              {displayedText ? (
-                displayedText.split('\n').map((line, index) => (
-                  <p key={index} className="animate-fadeIn">
-                    {line.startsWith('**') && line.endsWith('**') ? (
-                      <strong className="text-2xl text-orange-600 block mb-4">
-                        {line.replace(/\*\*/g, '')}
-                      </strong>
-                    ) : (
-                      line
-                    )}
+      <div className="max-w-8xl mx-auto">
+        <header className="text-center mb-8">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-2">
+            Recipe Wizard
+          </h1>
+          <p className="text-gray-600">
+            Transform your ingredients into culinary masterpieces
+          </p>
+        </header>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="bg-white rounded-3xl shadow-xl p-6 md:p-8">
+            <Form onSubmit={onSubmit} loading={loading} />
+          </div>
+
+          <div className="bg-white rounded-3xl shadow-xl p-6 md:p-8 min-h-[600px] relative">
+            {loading ? (
+              <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 rounded-3xl">
+                <div className="text-center space-y-4">
+                  <PacmanLoader color="#ff6b35" size={30} />
+                  <p className="text-orange-600 font-medium animate-pulse">
+                    Crafting your recipe...
                   </p>
-                ))
-              ) : (
-                <div className="text-gray-400 italic h-full flex items-center justify-center text-center p-8">
-                  <p>Enter your ingredients and preferences to generate a delicious recipe! 🍳<br/>
-                  Your custom recipe will appear here once ready...</p>
                 </div>
-              )}
-            </div>
-          )}
+              </div>
+            ) : (
+              <div className="prose prose-lg max-w-none">
+                {displayedText ? (
+                  displayedText.split("\n").map((line, index) => (
+                    <p key={index} className="animate-fadeIn">
+                      {line.startsWith("**") && line.endsWith("**") ? (
+                        <strong className="text-2xl text-orange-600 block mb-4">
+                          {line.replace(/\*\*/g, "")}
+                        </strong>
+                      ) : (
+                        line
+                      )}
+                    </p>
+                  ))
+                ) : (
+                  <div className="text-gray-400 italic h-full flex items-center justify-center text-center p-8">
+                    <p>
+                      Enter your ingredients and preferences to generate a
+                      delicious recipe! 🍳
+                      <br />
+                      Your custom recipe will appear here once ready...
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
-  </div>
   );
 };
 
-const Form = ({ onSubmit }) => {
+const Form = ({ onSubmit, loading }) => {
   const [formData, setFormData] = useState({
     ingredients: "",
     mealType: "",
     cuisine: "",
     cookingTime: "",
     complexity: "",
+    type: "",
   });
-  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
@@ -168,7 +186,7 @@ const Form = ({ onSubmit }) => {
         value={formData.ingredients}
         onChange={handleChange}
       />
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <SelectField
           id="mealType"
@@ -178,7 +196,7 @@ const Form = ({ onSubmit }) => {
           onChange={handleChange}
           options={["Breakfast", "Lunch", "Dinner", "Snack"]}
         />
-        
+
         <SelectField
           id="complexity"
           label="Cooking Skill"
@@ -197,6 +215,14 @@ const Form = ({ onSubmit }) => {
         value={formData.cuisine}
         onChange={handleChange}
       />
+      <SelectField
+        id="type"
+        label="type"
+        icon="🥝/🍗"
+        value={formData.type}
+        onChange={handleChange}
+        options={["Veg", "Non-Veg"]}
+      />
 
       <SelectField
         id="cookingTime"
@@ -207,7 +233,7 @@ const Form = ({ onSubmit }) => {
         options={["<30 min", "30-60 min", ">1 hour"]}
       />
 
-<button
+      <button
         onClick={() => onSubmit(formData)}
         disabled={loading}
         className="cursor-pointer w-full bg-gradient-to-r from-orange-500 to-pink-500 text-white py-4 rounded-xl font-semibold text-lg hover:from-orange-600 hover:to-pink-600 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-85 disabled:hover:shadow-lg"
@@ -220,7 +246,6 @@ const Form = ({ onSubmit }) => {
           <div className="flex items-center justify-center gap-2">
             Generate Recipe <RiAiGenerate />
           </div>
-
         )}
       </button>
     </div>
@@ -254,7 +279,9 @@ const SelectField = ({ id, label, icon, options, ...props }) => (
     >
       <option value="">Select...</option>
       {options.map((option) => (
-        <option key={option} value={option}>{option}</option>
+        <option key={option} value={option}>
+          {option}
+        </option>
       ))}
     </select>
   </div>
